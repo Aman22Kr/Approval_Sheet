@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approval Sheet</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { text-align: center; font-weight: bold; }
+        form { max-width: 600px; margin: 0 auto; }
+        .form-group { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        label { flex: 1; margin-right: 10px; align-self: center; }
+        input, textarea { flex: 2; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 15px; background-color: #007bff; color: #fff; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Approval Sheet</h1>
+    <form id="myForm">
+        <div class="form-group">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" name="customerName" required>
+        </div>
+        <div class="form-group">
+            <label for="orderNo">Order No:</label>
+            <input type="text" id="orderNo" name="orderNo" required>
+        </div>
+        <div class="form-group">
+            <label for="billingAddress">Billing Address:</label>
+            <textarea id="billingAddress" name="billingAddress" rows="2" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="deliveryAddress">Delivery Address:</label>
+            <textarea id="deliveryAddress" name="deliveryAddress" rows="2" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="contactNo">Contact No.:</label>
+            <input type="text" id="contactNo" name="contactNo" required>
+        </div>
+        <div class="form-group">
+            <label for="panNo">PAN No.:</label>
+            <input type="text" id="panNo" name="panNo" required>
+        </div>
+        <div class="form-group">
+            <label for="gstin">GSTIN:</label>
+            <input type="text" id="gstin" name="gstin" required>
+        </div>
+        <div class="form-group">
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model" required>
+        </div>
+        <div class="form-group">
+            <label for="machinePrice">Machine Price:</label>
+            <input type="text" id="machinePrice" name="machinePrice" required>
+        </div>
+        <div class="form-group">
+            <label for="customerPrice">Customer Price:</label>
+            <input type="text" id="customerPrice" name="customerPrice" required>
+        </div>
+        <div class="form-group">
+            <label for="financerName">Financer Name:</label>
+            <input type="text" id="financerName" name="financerName" required>
+        </div>
+        <div class="form-group">
+            <label for="rtoChoiceNo">RTO Choice No.:</label>
+            <input type="text" id="rtoChoiceNo" name="rtoChoiceNo" required>
+        </div>
+        <div class="form-group">
+            <label for="dealInclude">Deal Include:</label>
+            <textarea id="dealInclude" name="dealInclude" rows="2" required>INSURANCE + FOR(/-) + FOC(/-)</textarea>
+        </div>
+        <div class="form-group">
+            <label for="exchange">Exchange:</label>
+            <input type="text" id="exchange" name="exchange" required>
+        </div>
+
+     
+        <h2>Payment Details</h2>
+        <table id="paymentTable">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Payment Date</th>
+                    <th>Payment Mode Details (Cheque/Cash/RTGS/NEFT)</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Five Rows -->
+                <tr>
+                    <td>1</td>
+                    <td><input type="date" name="paymentDate1" required></td>
+                    <td><input type="text" name="paymentMode1" required></td>
+                    <td><input type="text" name="amount1" required></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><input type="date" name="paymentDate2" required></td>
+                    <td><input type="text" name="paymentMode2" required></td>
+                    <td><input type="text" name="amount2" required></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><input type="date" name="paymentDate3" required></td>
+                    <td><input type="text" name="paymentMode3" required></td>
+                    <td><input type="text" name="amount3" required></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><input type="date" name="paymentDate4" required></td>
+                    <td><input type="text" name="paymentMode4" required></td>
+                    <td><input type="text" name="amount4" required></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><input type="date" name="paymentDate5" required></td>
+                    <td><input type="text" name="paymentMode5" required></td>
+                    <td><input type="text" name="amount5" required></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <label for="salesExecutiveName">Sales Executive Name:</label>
+            <input type="text" id="salesExecutiveName" name="salesExecutiveName" required>
+        </div>
+        <h3>Signature:</h3>
+        <button type="button" onclick="generatePDF()">Download PDF</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+          document.addEventListener('DOMContentLoaded', function() {
+    const { jsPDF } = window.jspdf;
+
+    function generatePDF() {
+        const customerName = document.getElementById('customerName').value;
+        const orderNo = document.getElementById('orderNo').value;
+        const billingAddress = document.getElementById('billingAddress').value;
+        const deliveryAddress = document.getElementById('deliveryAddress').value;
+        const contactNo = document.getElementById('contactNo').value;
+        const panNo = document.getElementById('panNo').value;
+        const gstin = document.getElementById('gstin').value;
+        const model = document.getElementById('model').value;
+        const machinePrice = document.getElementById('machinePrice').value;
+        const customerPrice = document.getElementById('customerPrice').value;
+        const financerName = document.getElementById('financerName').value;
+        const rtoChoiceNo = document.getElementById('rtoChoiceNo').value;
+        const dealInclude = document.getElementById('dealInclude').value;
+        const exchange = document.getElementById('exchange').value;
+        const salesExecutiveName = document.getElementById('salesExecutiveName').value;
+
+        const doc = new jsPDF();
+        doc.setFontSize(12);
+
+        // Title
+        doc.setFont('Arial', 'bold');
+        doc.text('Approval Sheet', 10, 10);
+        doc.setFont('Arial', 'normal');
+        
+        // Form Details
+        let y = 20; // Starting vertical position
+
+        function addText(label, value) {
+            doc.setFont('Arial', 'bold');
+            doc.text(`${label}:`, 10, y);
+            doc.setFont('Arial', 'normal');
+            doc.text(value, 60, y);
+            y += 10;
+        }
+        
+        addText('Customer Name', customerName);
+        addText('Order No.', orderNo); // Placeholder for Order No.
+        addText('Billing Address', billingAddress);
+        addText('Delivery Address', deliveryAddress);
+        addText('Contact No.', contactNo);
+        addText('PAN No.', panNo);
+        addText('GSTIN', gstin);
+        addText('Model', model);
+        addText('Machine Price (Incl RT)', `${machinePrice}`);
+        addText('Customer Price', `${customerPrice}`);
+        addText('Financer Name', financerName);
+        addText('RTO Choice No.', rtoChoiceNo);
+        addText('Deal Include', dealInclude);
+        addText('Exchange', exchange);
+
+        // Payment Details Table
+        doc.setFontSize(12);
+        doc.setFont('Arial', 'bold');
+        doc.text('Payment Details', 10, y);
+        doc.setFont('Arial', 'normal');
+        y += 10;
+        
+        // Table Headers
+        const tableX = 10;
+        const columnWidths = [15, 30, 80, 25];
+        doc.setFont('Arial', 'bold');
+        doc.text('No.', tableX, y);
+        doc.text('Payment Date', tableX + columnWidths[0], y);
+        doc.text('Payment Mode Details', tableX + columnWidths[0] + columnWidths[1], y);
+        doc.text('Amount', tableX + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
+        doc.setFont('Arial', 'normal');
+        
+        // Table Rows
+        const rows = [];
+        for (let i = 1; i <= 5; i++) {
+            const paymentDate = document.querySelector(`input[name="paymentDate${i}"]`).value;
+            const paymentMode = document.querySelector(`input[name="paymentMode${i}"]`).value;
+            const amount = document.querySelector(`input[name="amount${i}"]`).value;
+            
+            rows.push({ no: i, date: paymentDate, mode: paymentMode, amount: amount });
+        }
+        
+        rows.forEach((row) => {
+            y += 10;
+            doc.text(row.no.toString(), tableX, y);
+            doc.text(row.date, tableX + columnWidths[0], y);
+            doc.text(row.mode, tableX + columnWidths[0] + columnWidths[1], y);
+            doc.text(row.amount, tableX + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
+        });
+
+        // Sales Executive Name and Signature
+        y += 20;
+        addText('Sales Executive Name', salesExecutiveName);
+        doc.setFont('Arial', 'bold');
+        doc.text('Signature:', 10, y);
+        
+        // Save the PDF
+        doc.save(`${customerName}_Approval_Sheet.pdf`);
+    }
+
+    window.generatePDF = generatePDF;
+});
+
+
+
+</script>
+</body>
+</html>
