@@ -135,10 +135,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script>
-          document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener("DOMContentLoaded", function () {
     const { jsPDF } = window.jspdf;
 
     function generatePDF() {
+        const doc = new jsPDF();
+
         const customerName = document.getElementById('customerName').value;
         const orderNo = document.getElementById('orderNo').value;
         const billingAddress = document.getElementById('billingAddress').value;
@@ -155,48 +158,62 @@
         const exchange = document.getElementById('exchange').value;
         const salesExecutiveName = document.getElementById('salesExecutiveName').value;
 
-        const doc = new jsPDF();
-        doc.setFontSize(12);
-
-        // Title
-        doc.setFont('Arial', 'bold');
-        doc.text('                                                                             Approval Sheet', 10, 10);
-        doc.setFont('Arial', 'normal');
-        
-        // Form Details
-        let y = 20; // Starting vertical position
-
-        function addText(label, value) {
-            doc.setFont('Arial', 'bold');
-            doc.text(`${label}:`, 10, y);
-            doc.setFont('Arial', 'normal');
-            doc.text(value, 60, y);
-            y += 10;
+        const paymentDetails = [];
+        for (let i = 1; i <= 5; i++) {
+            paymentDetails.push({
+                date: document.querySelector(`input[name=paymentDate${i}]`).value,
+                mode: document.querySelector(`input[name=paymentMode${i}]`).value,
+                amount: document.querySelector(`input[name=amount${i}]`).value,
+            });
         }
-        
-        addText('Customer Name', customerName);
-        addText('Order No.', orderNo); // Placeholder for Order No.
-        addText('Billing Address', billingAddress);
-        addText('Delivery Address', deliveryAddress);
-        addText('Contact No.', contactNo);
-        addText('PAN No.', panNo);
-        addText('GSTIN', gstin);
-        addText('Model', model);
-        addText('Machine Price (Incl RT)', `${machinePrice}`);
-        addText('Customer Price', `${customerPrice}`);
-        addText('Financer Name', financerName);
-        addText('RTO Choice No.', rtoChoiceNo);
-        addText('Deal Include', dealInclude);
-        addText('Exchange', exchange);
 
-        // Payment Details Table
+        doc.setFontSize(16);
+        doc.text('Approval Sheet', 105, 20, null, null, 'center');
+
         doc.setFontSize(12);
-        doc.setFont('Arial', 'bold');
-        doc.text('Payment Details', 10, y);
-        doc.setFont('Arial', 'normal');
+        let y = 30; // Initialize y position
+
+        // Function to add text with label
+        function addText(label, text) {
+            doc.setFont(undefined, 'bold');
+            doc.text(label, 20, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(text, 70, y);
+            y += 10; // Increase y position after each text block
+        }
+
+        // Function to handle multiline text
+        function addMultiLineText(label, text) {
+            doc.setFont(undefined, 'bold');
+            doc.text(label, 20, y);
+            doc.setFont(undefined, 'normal');
+            const lines = doc.splitTextToSize(text, 120);
+            doc.text(lines, 70, y);
+            y += lines.length * 5; // Adjust y position based on lines of text
+        }
+
+        // Adding fields to the PDF
+        addText('Customer Name:', customerName);
+        addText('Order No:', orderNo);
+        addMultiLineText('Billing Address:', billingAddress);
+        addMultiLineText('Delivery Address:', deliveryAddress);
+        addText('Contact No.:', contactNo);
+        addText('PAN No.:', panNo);
+        addText('GSTIN:', gstin);
+        addText('Model:', model);
+        addText('Machine Price:', machinePrice);
+        addText('Customer Price:', customerPrice);
+        addText('Financer Name:', financerName);
+        addText('RTO Choice No.:', rtoChoiceNo);
+        addText('Deal Include:', dealInclude);
+        addText('Exchange:', exchange);
+
+        // Adding payment details table
+        doc.setFont(undefined, 'bold');
+        doc.text('Payment Details:', 20, y);
         y += 10;
-        
-        // Table Headers
+        doc.setFont(undefined, 'normal');
+
         const tableX = 10;
         const columnWidths = [15, 30, 80, 25];
         doc.setFont('Arial', 'bold');
@@ -205,40 +222,24 @@
         doc.text('Payment Mode Details', tableX + columnWidths[0] + columnWidths[1], y);
         doc.text('Amount', tableX + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
         doc.setFont('Arial', 'normal');
-        
-        // Table Rows
-        const rows = [];
-        for (let i = 1; i <= 5; i++) {
-            const paymentDate = document.querySelector(`input[name="paymentDate${i}"]`).value;
-            const paymentMode = document.querySelector(`input[name="paymentMode${i}"]`).value;
-            const amount = document.querySelector(`input[name="amount${i}"]`).value;
-            
-            rows.push({ no: i, date: paymentDate, mode: paymentMode, amount: amount });
-        }
-        
-        rows.forEach((row) => {
-            y += 10;
-            doc.text(row.no.toString(), tableX, y);
-            doc.text(row.date, tableX + columnWidths[0], y);
-            doc.text(row.mode, tableX + columnWidths[0] + columnWidths[1], y);
-            doc.text(row.amount, tableX + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
+
+        y += 10; // Move y position for table rows
+        paymentDetails.forEach((detail, index) => {
+            doc.text((index + 1).toString(), tableX, y);
+            doc.text(detail.date, tableX + columnWidths[0], y);
+            doc.text(detail.mode, tableX + columnWidths[0] + columnWidths[1], y);
+            doc.text(detail.amount, tableX + columnWidths[0] + columnWidths[1] + columnWidths[2], y);
+            y += 10; // Increase y position for each row
         });
 
-        // Sales Executive Name and Signature
-        y += 20;
-        addText('Sales Executive Name', salesExecutiveName);
-        doc.setFont('Arial', 'bold');
+        addText('Sales Executive Name:', salesExecutiveName);
         doc.text('Signature:', 10, y);
-        
-        // Save the PDF
+
         doc.save(`${customerName}_Approval_Sheet.pdf`);
     }
 
-    window.generatePDF = generatePDF;
+    document.querySelector('button').addEventListener('click', generatePDF);
 });
-
-
-
-</script>
+    </script>
 </body>
 </html>
