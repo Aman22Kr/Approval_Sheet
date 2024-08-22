@@ -20,6 +20,7 @@
     </style>
 </head>
 <body>
+    <div class="date-container" id="currentDate"></div>
     <h1>Approval Sheet</h1>
     <form id="myForm">
         <div class="form-group">
@@ -137,6 +138,10 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
+            const dateContainer = document.getElementById('currentDate');
+            const today = new Date().toLocaleDateString();
+            dateContainer.textContent = `Date: ${today}`;
+
     const { jsPDF } = window.jspdf;
 
     function generatePDF() {
@@ -214,6 +219,8 @@
         y += 10;
         doc.setFont(undefined, 'normal');
 
+        doc.text(`Date: ${today}`, 200, 10, null, null, 'right');
+
         const tableX = 10;
         const columnWidths = [15, 30, 80, 25];
         doc.setFont('Arial', 'bold');
@@ -233,7 +240,7 @@
         });
 
         addText('Sales Executive Name:', salesExecutiveName);
-        doc.text('Signature:', 10, y);
+        doc.text('Signature:', 15, y);
 
         doc.save(`${customerName}_Approval_Sheet.pdf`);
     }
