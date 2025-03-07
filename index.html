@@ -130,7 +130,6 @@
             <label for="salesExecutiveName">Sales Executive Name:</label>
             <input type="text" id="salesExecutiveName" name="salesExecutiveName" required>
         </div>
-        <h3>Signature:</h3>
         <button type="button" onclick="generatePDF()">Download PDF</button>
     </form>
 
@@ -241,6 +240,7 @@
 
         addText('Sales Executive Name:', salesExecutiveName);
         doc.text('Signature:', 15, y);
+        doc.text('Coustomer Signature:',140, y);
 
         doc.save(`${customerName}_Approval_Sheet.pdf`);
     }
